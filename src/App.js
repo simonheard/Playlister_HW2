@@ -7,6 +7,9 @@ import jsTPS from './common/jsTPS.js';
 
 // OUR TRANSACTIONS
 import MoveSong_Transaction from './transactions/MoveSong_Transaction.js';
+import AddSong_Transaction from './transactions/AddSong_Transaction.js';
+import DeleteSong_Transaction from './transactions/DeleteSong_Transaction.js';
+import EditSong_Transaction from './transactions/EditSong_Transaction.js';
 
 // THESE REACT COMPONENTS ARE MODALS
 import DeleteListModal from './components/DeleteListModal.js';
@@ -237,9 +240,30 @@ class App extends React.Component {
         }
         this.setStateWithUpdatedList(list);
     }
+    addSong(){
+        let list = this.state.currentList;
+        let newSong = {title:"Untitled", artist:"Unknown", youTubeId: "dQw4w9WgXcQ"};
+        list.songs.push(newSong);
+        this.setStateWithUpdatedList(list);
+    }
     // THIS FUNCTION ADDS A MoveSong_Transaction TO THE TRANSACTION STACK
     addMoveSongTransaction = (start, end) => {
         let transaction = new MoveSong_Transaction(this, start, end);
+        this.tps.addTransaction(transaction);
+    }
+    // THIS FUNCTION ADDS A AddSong_Transaction TO THE TRANSACTION STACK
+    addAddSongTransaction = () => {
+        let transaction = new AddSong_Transaction(this);
+        this.tps.addTransaction(transaction);
+    }
+    // THIS FUNCTION ADDS A DeleteSong_Transaction TO THE TRANSACTION STACK
+    addDeleteSongTransaction = (posInList, songObject) => {
+        let transaction = new DeleteSong_Transaction(this, posInList, songObject);
+        this.tps.addTransaction(transaction);
+    }
+    // THIS FUNCTION ADDS A EditSong_Transaction TO THE TRANSACTION STACK
+    addEditSongTransaction = (posInList, oldSong, newSong) => {
+        let transaction = new EditSong_Transaction(this, posInList, oldSong, newSong);
         this.tps.addTransaction(transaction);
     }
     // THIS FUNCTION BEGINS THE PROCESS OF PERFORMING AN UNDO
@@ -322,6 +346,7 @@ class App extends React.Component {
                     canUndo={canUndo}
                     canRedo={canRedo}
                     canClose={canClose} 
+                    addSongCallback={this.addAddSongTransaction}
                     undoCallback={this.undo}
                     redoCallback={this.redo}
                     closeCallback={this.closeCurrentList}
