@@ -136,8 +136,8 @@ body {
 }
 
 .song-card-button{
-  float:right;
   font-size:18pt;
+  margin-left: auto
 }
 
 
@@ -173,7 +173,6 @@ body {
   display:flex;
   align-items: center;
   font-size: 24pt;
-  height:20%;
   margin: 10px;
   padding: 20px;
   border-radius: 25px;

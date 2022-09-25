@@ -253,6 +253,9 @@ class App extends React.Component {
             this.db.mutationUpdateList(this.state.currentList);
         }
     }
+    markSongForDeletion = (id) => {
+        
+    }
     markListForDeletion = (keyPair) => {
         this.setState(prevState => ({
             currentList: prevState.currentList,
@@ -272,6 +275,15 @@ class App extends React.Component {
     // THIS FUNCTION IS FOR HIDING THE MODAL
     hideDeleteListModal() {
         let modal = document.getElementById("delete-list-modal");
+        modal.classList.remove("is-visible");
+    }
+    showDeleteSongModal() {
+        let modal = document.getElementById("delete-song-modal");
+        modal.classList.add("is-visible");
+    }
+    // THIS FUNCTION IS FOR HIDING THE MODAL
+    hideDeleteSongModal() {
+        let modal = document.getElementById("delete-song-modal");
         modal.classList.remove("is-visible");
     }
     render() {
