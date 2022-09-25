@@ -246,6 +246,11 @@ class App extends React.Component {
         list.songs.push(newSong);
         this.setStateWithUpdatedList(list);
     }
+    undoAddSong(){
+        let list = this.state.currentList;
+        list.songs.pop();
+        this.setStateWithUpdatedList(list);
+    }
     // THIS FUNCTION ADDS A MoveSong_Transaction TO THE TRANSACTION STACK
     addMoveSongTransaction = (start, end) => {
         let transaction = new MoveSong_Transaction(this, start, end);
