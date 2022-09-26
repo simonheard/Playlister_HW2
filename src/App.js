@@ -129,6 +129,8 @@ class App extends React.Component {
 
             // SO IS STORING OUR SESSION DATA
             this.db.mutationUpdateSessionData(this.state.sessionData);
+            this.tps.clearAllTransactions();
+            this.setState({});
         });
     }
     // THIS FUNCTION MOVES A SONG IN THE CURRENT LIST FROM

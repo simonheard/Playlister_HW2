@@ -44,6 +44,8 @@ export default class SongCard extends React.Component {
         targetId = targetId.substring(target.id.indexOf("-") + 1);
         let sourceId = event.dataTransfer.getData("song");
         sourceId = sourceId.substring(sourceId.indexOf("-") + 1);
+
+        console.log("from ", sourceId, " to ", targetId);
         
         this.setState(prevState => ({
             isDragging: false,
@@ -56,16 +58,16 @@ export default class SongCard extends React.Component {
 
     handleDeleteSong = (event) => {
         //event.stopPropagation();
-        this.props.deleteSongCallback(this.getItemNum());
+        this.props.deleteSongCallback(this.getItemNum()-1);
     }
 
     handleEditSong = (event) => {
         //event.stopPropagation();
-        this.props.editSongCallback(this.getItemNum());
+        this.props.editSongCallback(this.getItemNum()-1);
     }
 
     getItemNum = () => {
-        return this.props.id.substring("playlist-song-".length)-1;
+        return this.props.id.substring("playlist-song-".length);
     }
 
     render() {
@@ -88,10 +90,10 @@ export default class SongCard extends React.Component {
                 onDoubleClick={this.handleEditSong}
                 draggable="true"
             >
-                {num+1}. <a href={"https://www.youtube.com/watch?v="+song.youTubeId}> {song.title} by {song.artist} </a>
+                {num}. <a href={"https://www.youtube.com/watch?v="+song.youTubeId}> {song.title} by {song.artist} </a>
                 <input
                     type="button"
-                    id={"delete-song-" + num}
+                    id={"delete-song-" + (num)}
                     className="song-card-button"
                     onClick={this.handleDeleteSong}
                     value={"X"} />
