@@ -60,7 +60,7 @@ export default class SongCard extends React.Component {
     }
 
     getItemNum = () => {
-        return this.props.id.substring("playlist-song-".length);
+        return this.props.id.substring("playlist-song-".length)-1;
     }
 
     render() {

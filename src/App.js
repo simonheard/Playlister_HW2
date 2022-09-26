@@ -130,8 +130,19 @@ class App extends React.Component {
         });
     }
 
+    deleteSong = (posInList) => {
+        this.state.currentList.songs.splice(posInList, 1);
+        this.setStateWithUpdatedList(this.state.currentList);
+    }
+
+    undoDeleteSong = (posInList, songObject) => {
+        this.state.currentList.songs.splice(posInList, 0, songObject);
+        this.setStateWithUpdatedList(this.state.currentList);
+    }
+
     deleteMarkedSong = () => {
-        
+        this.addDeleteSongTransaction(this.state.songIdMarkedForDeletion, this.state.currentList.songs[this.state.songIdMarkedForDeletion]);
+        this.hideDeleteSongModal();
     }
 
     deleteMarkedList = () => {
