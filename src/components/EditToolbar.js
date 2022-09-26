@@ -6,6 +6,21 @@ export default class EditToolbar extends React.Component {
             this.props.addSongCallback();
         }
     }
+    handleKeyDown = (event) => {
+        if ((event.metaKey || event.ctrlKey) && event.code === 'KeyZ') {
+            console.log('Pressed Command/Control + Z');
+            if(this.props.canUndo){
+                this.props.undoCallback();
+            }
+        }
+        if ((event.metaKey || event.ctrlKey) && event.code === 'KeyY') {
+            console.log('Pressed Command/Control + Y');
+            if(this.props.canRedo){
+                this.props.redoCallback();
+            }
+        }
+        
+    }
     render() {
         const { canAddSong, canUndo, canRedo, canClose, 
                 undoCallback, redoCallback, closeCallback} = this.props;
@@ -17,6 +32,7 @@ export default class EditToolbar extends React.Component {
         if (!canUndo) undoClass += "-disabled";
         if (!canRedo) redoClass += "-disabled";
         if (!canClose) closeClass += "-disabled";
+        document.addEventListener("keydown", this.handleKeyDown);
         return (
             <div id="edit-toolbar">
             <input 

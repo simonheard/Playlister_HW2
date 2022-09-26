@@ -309,6 +309,7 @@ class App extends React.Component {
             // MAKE SURE THE LIST GETS PERMANENTLY UPDATED
             this.db.mutationUpdateList(this.state.currentList);
         }
+        this.setState({});
     }
     // THIS FUNCTION BEGINS THE PROCESS OF PERFORMING A REDO
     redo = () => {
@@ -318,6 +319,7 @@ class App extends React.Component {
             // MAKE SURE THE LIST GETS PERMANENTLY UPDATED
             this.db.mutationUpdateList(this.state.currentList);
         }
+        this.setState({});
     }
     markSongForEdit = (id) => {
         this.setState(prevState => ({
