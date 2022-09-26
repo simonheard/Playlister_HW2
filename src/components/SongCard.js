@@ -59,6 +59,11 @@ export default class SongCard extends React.Component {
         this.props.deleteSongCallback(this.getItemNum());
     }
 
+    handleEditSong = (event) => {
+        //event.stopPropagation();
+        this.props.editSongCallback(this.getItemNum());
+    }
+
     getItemNum = () => {
         return this.props.id.substring("playlist-song-".length)-1;
     }
@@ -80,9 +85,10 @@ export default class SongCard extends React.Component {
                 onDragEnter={this.handleDragEnter}
                 onDragLeave={this.handleDragLeave}
                 onDrop={this.handleDrop}
+                onDoubleClick={this.handleEditSong}
                 draggable="true"
             >
-                {num}. <a href={"https://www.youtube.com/watch?v="+song.youTubeId}> {song.title} by {song.artist} </a>
+                {num+1}. <a href={"https://www.youtube.com/watch?v="+song.youTubeId}> {song.title} by {song.artist} </a>
                 <input
                     type="button"
                     id={"delete-song-" + num}

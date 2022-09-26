@@ -22,6 +22,7 @@ import PlaylistCards from './components/PlaylistCards.js';
 import SidebarHeading from './components/SidebarHeading.js';
 import SidebarList from './components/SidebarList.js';
 import Statusbar from './components/Statusbar.js';
+import EditSongModal from './components/EditSongModal';
 
 class App extends React.Component {
     constructor(props) {
@@ -40,6 +41,7 @@ class App extends React.Component {
         this.state = {
             listKeyPairMarkedForDeletion : null,
             songIdMarkedForDeletion: null,
+            songIdMarkedForEdit: null,
             currentList : null,
             sessionData : loadedSessionData
         }
@@ -129,6 +131,41 @@ class App extends React.Component {
             this.db.mutationUpdateSessionData(this.state.sessionData);
         });
     }
+    // THIS FUNCTION MOVES A SONG IN THE CURRENT LIST FROM
+    // start TO end AND ADJUSTS ALL OTHER ITEMS ACCORDINGLY
+    moveSong(start, end) {
+        let list = this.state.currentList;
+
+        // WE NEED TO UPDATE THE STATE FOR THE APP
+        start -= 1;
+        end -= 1;
+        if (start < end) {
+            let temp = list.songs[start];
+            for (let i = start; i < end; i++) {
+                list.songs[i] = list.songs[i + 1];
+            }
+            list.songs[end] = temp;
+        }
+        else if (start > end) {
+            let temp = list.songs[start];
+            for (let i = start; i > end; i--) {
+                list.songs[i] = list.songs[i - 1];
+            }
+            list.songs[end] = temp;
+        }
+        this.setStateWithUpdatedList(list);
+    }
+    addSong(){
+        let list = this.state.currentList;
+        let newSong = {title:"Untitled", artist:"Unknown", youTubeId: "dQw4w9WgXcQ"};
+        list.songs.push(newSong);
+        this.setStateWithUpdatedList(list);
+    }
+    undoAddSong(){
+        let list = this.state.currentList;
+        list.songs.pop();
+        this.setStateWithUpdatedList(list);
+    }
 
     deleteSong = (posInList) => {
         this.state.currentList.songs.splice(posInList, 1);
@@ -138,6 +175,21 @@ class App extends React.Component {
     undoDeleteSong = (posInList, songObject) => {
         this.state.currentList.songs.splice(posInList, 0, songObject);
         this.setStateWithUpdatedList(this.state.currentList);
+    }
+
+    editSong = (posInList, newSong) => {
+        let list = null;
+        if(this.state.currentList){
+            list = this.state.currentList;
+        }
+        list.songs[posInList] = newSong;
+        this.setState({currentList: list});
+        this.setStateWithUpdatedList(this.state.currentList);
+    }
+
+    editMarkedSong = (oldSong, newSong) => {
+        this.addEditSongTransaction(this.state.songIdMarkedForEdit, oldSong, newSong);
+        this.hideEditSongModal();
     }
 
     deleteMarkedSong = () => {
@@ -227,41 +279,7 @@ class App extends React.Component {
     getPlaylistSize = () => {
         return this.state.currentList.songs.length;
     }
-    // THIS FUNCTION MOVES A SONG IN THE CURRENT LIST FROM
-    // start TO end AND ADJUSTS ALL OTHER ITEMS ACCORDINGLY
-    moveSong(start, end) {
-        let list = this.state.currentList;
 
-        // WE NEED TO UPDATE THE STATE FOR THE APP
-        start -= 1;
-        end -= 1;
-        if (start < end) {
-            let temp = list.songs[start];
-            for (let i = start; i < end; i++) {
-                list.songs[i] = list.songs[i + 1];
-            }
-            list.songs[end] = temp;
-        }
-        else if (start > end) {
-            let temp = list.songs[start];
-            for (let i = start; i > end; i--) {
-                list.songs[i] = list.songs[i - 1];
-            }
-            list.songs[end] = temp;
-        }
-        this.setStateWithUpdatedList(list);
-    }
-    addSong(){
-        let list = this.state.currentList;
-        let newSong = {title:"Untitled", artist:"Unknown", youTubeId: "dQw4w9WgXcQ"};
-        list.songs.push(newSong);
-        this.setStateWithUpdatedList(list);
-    }
-    undoAddSong(){
-        let list = this.state.currentList;
-        list.songs.pop();
-        this.setStateWithUpdatedList(list);
-    }
     // THIS FUNCTION ADDS A MoveSong_Transaction TO THE TRANSACTION STACK
     addMoveSongTransaction = (start, end) => {
         let transaction = new MoveSong_Transaction(this, start, end);
@@ -299,6 +317,15 @@ class App extends React.Component {
             // MAKE SURE THE LIST GETS PERMANENTLY UPDATED
             this.db.mutationUpdateList(this.state.currentList);
         }
+    }
+    markSongForEdit = (id) => {
+        this.setState(prevState => ({
+            currentList: prevState.currentList,
+            songIdMarkedForEdit: id,
+            sessionData: prevState.sessionData
+        }), () => {
+            this.showEditSongModal();
+        });
     }
     markSongForDeletion = (id) => {
         this.setState(prevState => ({
@@ -339,6 +366,14 @@ class App extends React.Component {
         let modal = document.getElementById("delete-song-modal");
         modal.classList.remove("is-visible");
     }
+    showEditSongModal() {
+        let modal = document.getElementById("edit-song-modal");
+        modal.classList.add("is-visible");
+    }
+    hideEditSongModal() {
+        let modal = document.getElementById("edit-song-modal");
+        modal.classList.remove("is-visible");
+    }
     render() {
         let canAddSong = this.state.currentList !== null;
         let canUndo = this.tps.hasTransactionToUndo();
@@ -370,7 +405,8 @@ class App extends React.Component {
                 <PlaylistCards
                     currentList={this.state.currentList}
                     moveSongCallback={this.addMoveSongTransaction}
-                    deleteSongCallback={this.markSongForDeletion} />
+                    deleteSongCallback={this.markSongForDeletion}
+                    editSongCallback={this.markSongForEdit} />
                 <Statusbar 
                     currentList={this.state.currentList} />
                 <DeleteListModal
@@ -382,6 +418,13 @@ class App extends React.Component {
                     songId={this.state.songIdMarkedForDeletion}
                     hideDeleteSongModalCallback={this.hideDeleteSongModal}
                     deleteSongCallback={this.deleteMarkedSong}
+                    currentList={this.state.currentList}
+                />
+                <EditSongModal
+                    songId={this.state.songIdMarkedForEdit}
+                    hideEditSongModalCallback={this.hideEditSongModal}
+                    editSongCallback={this.editMarkedSong}
+                    currentList={this.state.currentList}
                 />
             </div>
         );
