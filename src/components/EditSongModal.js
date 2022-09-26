@@ -58,7 +58,6 @@ export default class EditSongModal extends Component {
                             Edit Song
                         </div>
                         <div className="modal-center">
-                            <div className="modal-center-content">
                                 <div className="modal-prompt" id="title-prompt">Title:</div>
                                 <input
                                     id="edit-song-modal-title-textfield"
@@ -86,7 +85,6 @@ export default class EditSongModal extends Component {
                                     onBlur={this.handleBlur}
                                     onChange={this.handleUpdateYouTubeId}
                                     value={youTubeId}/>
-                            </div>
                         </div>
                         <div className="modal-south">
                             <input type="button" 
