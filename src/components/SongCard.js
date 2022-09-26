@@ -53,7 +53,9 @@ export default class SongCard extends React.Component {
         }));
 
         // ASK THE MODEL TO MOVE THE DATA
-        this.props.moveCallback(sourceId, targetId);
+        if (sourceId && targetId){
+            this.props.moveCallback(sourceId, targetId);
+        }
     }
 
     handleDeleteSong = (event) => {
@@ -90,10 +92,10 @@ export default class SongCard extends React.Component {
                 onDoubleClick={this.handleEditSong}
                 draggable="true"
             >
-                {num}. <a href={"https://www.youtube.com/watch?v="+song.youTubeId}> {song.title} by {song.artist} </a>
+                {num}. <a id={'song-' + num} href={"https://www.youtube.com/watch?v="+song.youTubeId}> {song.title} by {song.artist} </a>
                 <input
                     type="button"
-                    id={"delete-song-" + (num)}
+                    id={"deletesong-" + (num)}
                     className="song-card-button"
                     onClick={this.handleDeleteSong}
                     value={"X"} />
