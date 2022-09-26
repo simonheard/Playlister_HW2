@@ -263,6 +263,7 @@ class App extends React.Component {
             // AN AFTER EFFECT IS THAT WE NEED TO MAKE SURE
             // THE TRANSACTION STACK IS CLEARED
             this.tps.clearAllTransactions();
+            this.setState({});
         });
     }
     setStateWithUpdatedList(list) {
@@ -378,6 +379,7 @@ class App extends React.Component {
         let canAddSong = this.state.currentList !== null;
         let canUndo = this.tps.hasTransactionToUndo();
         let canRedo = this.tps.hasTransactionToRedo();
+        console.log("can Undo",canUndo);
         let canClose = this.state.currentList !== null;
         return (
             <div id="root">
